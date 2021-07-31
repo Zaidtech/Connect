@@ -1,0 +1,67 @@
+<%-  include ('../partials/header') -%>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <p class="lead">Connect</p>
+            <div class="visible-lg">
+                <div class="list-group">
+                    <li class="list-group-item active">Camping</li>
+                    <li class="list-group-item">Lifestyle</li>
+                    <li class="list-group-item">Food</li>
+                </div>
+                
+                <div> Map goes here!! Location of post!!</div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+
+            <div class="thumbnail" style="padding:0">
+                <img  class="img-responsive" src=" <%= campground.image %>  " alt="" style="width:100%" >
+                    <div class="caption-full"      style="margin-left: 10px";>
+                        <h4 class="pull-right visible-xs"> Location!! #WFGQ##@ </h4>
+                        <h4> <%= campground.name %> </h4>
+                        <p> <%= campground.description %>  </p>
+                        <p><%= campground.user.username %></p>
+                    </div>
+            </div>
+            <form action="/campgrounds/<%= campground._id %>/comments", method="POST">
+            <div class="input-group">
+                        <input class="form-control" type="text" name="comment[author]" value="<%= currentUser.username %>"  placeholder="Author name" style="display: none;" >
+                        <input class= "form-control" type="text" name="comment[text]"  placeholder="Comment">
+                        <div class="input-group-btn">
+                    <!-- Buttons -->
+                        <!-- <a href="/campgrounds/<%=campground._id %>/comment/new%>"> -->
+                            <button class="btn btn-default" >POST</button>
+                        <!-- </a> -->
+                    </div>
+                </form>
+            </div>
+            
+            <div class="well">
+                    <% campground.comments.forEach(function(comment){  %>
+                        <div class="row" style="padding-top: 5px;">
+                            <div class="col-md-12">
+                                <div> 
+                                    <strong> <%=comment.author%>  </strong> 
+                                </div>
+                                    <div>
+                                        <span>
+                                            <%= comment.text %>
+                                        </span>    
+                                    </div>
+                            </div>                            
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<%- include ('../partials/footer') -%>
+
+
+
