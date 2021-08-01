@@ -104,12 +104,12 @@ var upload = multer({
 // Image Upload Stuff
 app.get("/changePic", function(req,res){
     res.render("profile_pics/upload_image");
+
 });
 
 
 app.post('/changePic', upload.single('profile-pic'), (req, res, next) => {
-    console.log(req.user);
-
+   
     var obj = {
         name: req.body.name,
         desc: req.body.desc,
