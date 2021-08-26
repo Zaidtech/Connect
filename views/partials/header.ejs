@@ -3,23 +3,36 @@
     <head>
         <!-- can't connect app.css!! -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- to disable zooming in -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <title>Connect</title>
+      <!-- semantic ui -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
         <!-- cropper js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha512-ooSWpxJsiXe6t4+PPjCgYmVfr1NS5QXJACcR/FPpsdm6kqG1FmQ2SVyg2RXeVuCRBLr0lWHnWJP6Zs1Efvxzww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha512-0SPWAwpC/17yYyZ/4HSllgaK7/gg9OlVozq8K7rf3J8LvCjYEEIfzzpnA2/SSjpGIunCSD18r3UhvDcu/xncWA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        
+        <!-- loading animation -->
         <link rel="stylesheet" href="css/loader.css">
+        <!-- bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <!-- <link rel="text/stylesheet" href="app.css"> -->
+        <!--autocomplete js lib -->
+        
+        <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/autoComplete.min.js"></script>
+        <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/css/autoComplete.min.css"> -->
+        <!-- give local css link for this search auto complete -->
+        <!-- local css -->
+        <link rel="text/stylesheet" href="app.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+      <!-- fonts google -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js">
       </head>
 <body>    
-  <div class="container" >
+  <div class="container ">
     <nav class="navbar navbar-default " style="background:white; " style="padding-bottom:50px; margin-bottom: 50px;" >
         <div class="container-fluid">
           <div class="navbar-header">
@@ -28,14 +41,16 @@
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
               <!-- If the user is signed-in -->
             <% }else{ %>
+              
               <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" style="border:none">
                     <% if(!images){%>
                       <span class="glyphicon glyphicon-user">
                         <%}else {%>
-                          <img class="img-circle"  src=" data:image/<%=images.img.contentType%>;base64, <%=images.img.data.toString('base64')%>"  style="width: 50px; height: 50px;">
+                          <img class="img-circle"  src=" data:image/<%=images.img.contentType%>;base64, <%=images.img.data.toString('base64')%>"  style="width: 60px; height: 60px;">
                         <%}%>
               </button>
               <%}%>
+
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -43,26 +58,45 @@
             </button>
             <a class="navbar-brand" href="/" style="font-size: 30px; font-family: 'Dancing Script', cursive; color:black" > Connect</a>
           </div>
-      
+          
+         
+         
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right" style="margin-left: 40px;">
             <!-- If user is not signed in-->
              <% if(!currentUser){ %>
-                
+              <li  style="padding-top: 6px;">
+                <div class="ui search" style="display: inline;">
+                  <div class="ui icon input">
+                    <input class="prompt" type="text" placeholder="Common passwords...">
+                    <i class="search icon"></i>
+                  </div>
+                  <div class="results"></div>
+                </div>
+              </li>
               <li><a href="/register">SignUp</a></li>
               <li><a href="/login">Login</a></li>
+
 
               <% }else{ %>
                 
                 <% if(!images){%>
                   
-                  <span class="glyphicon glyphicon-user">
+                  <li><a href="#" style="color: rgb(174, 174, 201);"> @<%= currentUser.username%>  </a></li>
                     <%}else {%>
+                      
                       <img class="img-circle"  src=" data:image/<%=images.img.contentType%>;base64, <%=images.img.data.toString('base64')%>"  style="width: 50px; height: 50px;">
                     <%}%>
-
-                      <li><a href="#" style="color: rgb(174, 174, 201);"> @<%= currentUser.username%>  </a></li>
+                    <li  style="padding-top: 6px;" >
+                      <div class="ui search "  style="display: inline; margin-top: 10px;">
+                        <div class="ui icon input autoComplete_wrapper">
+                          <input class="prompt"  id="autoComplete" type="text" placeholder="Search....">
+                          <i class="search icon"></i>
+                        </div>
+                        <div class="results"></div>
+                      </div>
+                    </li>
                       <li><a href="/logout">Logout</a></li>
                       <li><a href="/changePic">Change Profile Pic</a> </li>
                     </ul>  
@@ -72,6 +106,55 @@
           </div>
         </div>
       </nav>
-    </div>
+      <div class="container">
+        <% if(error && error.length > 0){ %>
+    
+          <div class="alert alert-danger" role="alert">
+            <%= error%> 
+          </div>
+        <%}%>
+        <% if(success && success.length >0){ %>
+          <div class="alert alert-success" role="alert">
+            <%= success%> 
+          </div>
+        <%}%>
+        </div>
+      </div>
+ 
       <div style="margin-top:10px;">
-      
+        <script>
+          const autoCompleteJS = new autoComplete({
+              selector: "#autoComplete",
+              placeHolder: "Search....",
+              data: {
+                  src: ["Sauce - Thousand Island", "Wild Boar - Tenderloin", "Goat - Whole Cut", ],
+                  cache: true,
+              },
+              resultsList: {
+                  element: (list, data) => {
+                      if (!data.results.length) {
+                          // Create "No Results" message element
+                          const message = document.createElement("div");
+                          // Add class to the created element
+                          message.setAttribute("class", "no_result");
+                          // Add message text content
+                          message.innerHTML = `<span>No results found"${data.query}"</span>`;
+                          // Append message element to the results list
+                          list.prepend(message);
+                      }
+                  },
+                  noResults: true,
+              },
+              resultItem: {
+                  highlight: true
+              },
+              events: {
+                  input: {
+                      selection: (event) => {
+                          const selection = event.detail.selection.value;
+                          autoCompleteJS.input.value = selection;
+                      }
+                  }
+              }
+          });
+      </script>

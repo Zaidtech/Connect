@@ -9,8 +9,8 @@ var express                 = require('express'),
     passport                = require('passport'),
     LocalStrategy           = require('passport-local'),
     User                    = require("./models/user"),
-    imgModel                = require("./models/image")
-    
+    imgModel                = require("./models/image"),
+    flash                   = require("connect-flash")
 var commentRoutes           = require("./routes/comments"),
     campgroundRoutes        = require("./routes/posts"),
     indexRoutes             = require("./routes/index"),
@@ -19,15 +19,17 @@ var commentRoutes           = require("./routes/comments"),
     fs                      = require('fs');
 
 
+const URL = "mongodb+srv://userZaid:Qcyfz3aRyRmEvpMq@cluster0.cm0aw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 // Making a connection to the database
-mongoose.connect('mongodb://localhost/yelp_camp', { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
+// mongoose.connect('mongodb://localhost/yelp_camp', { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
 
 // APP.USE
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"))
-
-
+app.use(flash());
+    
 // express session
 app.use(require('express-session')({
     secret : "The snake is flying on pencil nose!!",
@@ -35,14 +37,20 @@ app.use(require('express-session')({
     saveUninitialized:false
 }));
 
-// Passport config
 
+// Passport config
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// message flashing
+app.use(function(req,res,next){
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    next();
+});
 
 // making a var req.user publically accessible
 app.use(function(req,res,next){
@@ -50,6 +58,7 @@ app.use(function(req,res,next){
     if(req.user){
         
         res.locals.currentUser = req.user;
+       
 
         var dp = {};
         imgModel.findById(req.user.images, function(err,image){
@@ -65,9 +74,10 @@ app.use(function(req,res,next){
     }    
     else{
         res.locals.currentUser = req.user;
-        console.log(req.user);
+        // console.log(req.user);
         next();
     }
+ 
 });
 
 
@@ -108,7 +118,7 @@ app.get("/changePic", function(req,res){
 
 
 app.post('/changePic', upload.single('profile-pic'), (req, res, next) => {
-    console.log(req.user);
+    // console.log(req.user);
 
     var obj = {
         name: req.body.name,
