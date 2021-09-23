@@ -6,12 +6,8 @@
         <!-- to disable zooming in -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <title>Connect</title>
-<<<<<<< HEAD
-        
-=======
       <!-- semantic ui -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
->>>>>>> Flashing
         <!-- cropper js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha512-ooSWpxJsiXe6t4+PPjCgYmVfr1NS5QXJACcR/FPpsdm6kqG1FmQ2SVyg2RXeVuCRBLr0lWHnWJP6Zs1Efvxzww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha512-0SPWAwpC/17yYyZ/4HSllgaK7/gg9OlVozq8K7rf3J8LvCjYEEIfzzpnA2/SSjpGIunCSD18r3UhvDcu/xncWA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -47,11 +43,12 @@
             <% }else{ %>
               
               <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" style="border:none">
-                    <% if(!images){%>
+                    <% if(imagelink==""){%>
                       <span class="glyphicon glyphicon-user">
                         <%}else {%>
-                          <img class="img-circle"  src=" data:image/<%=images.img.contentType%>;base64, <%=images.img.data.toString('base64')%>"  style="width: 60px; height: 60px;">
-                        <%}%>
+                          <img class="img-circle"  src="<%=imagelink%>" style="width: 50px; height: 50px;"></img>
+                          <!-- <h1>no one here!!</h1> -->
+                          <%}%>
               </button>
               <%}%>
 
@@ -82,15 +79,15 @@
               <li><a href="/register">SignUp</a></li>
               <li><a href="/login">Login</a></li>
 
-
               <% }else{ %>
                 
-                <% if(!images){%>
-                  
+                <% if(!imagelink){%>
+                  <h6><%=imagelink%> </h6>
                   <li><a href="#" style="color: rgb(174, 174, 201);"> @<%= currentUser.username%>  </a></li>
                     <%}else {%>
-                      
-                      <img class="img-circle"  src=" data:image/<%=images.img.contentType%>;base64, <%=images.img.data.toString('base64')%>"  style="width: 50px; height: 50px;">
+                      <!-- <h6><%=imagelink%> </h6> -->
+                      <img class="img-circle"  src="<%=imagelink%>" style="width: 50px; height: 50px;"></img>
+                      <!-- <h1>no one !!</h1> -->
                     <%}%>
                     <li  style="padding-top: 6px;" >
                       <div class="ui search "  style="display: inline; margin-top: 10px;">

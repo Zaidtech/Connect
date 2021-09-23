@@ -1,0 +1,1 @@
+<img class="img-circle"  src=" data:image/<%=images.img.contentType%>;base64, <%=images.img.data.toString('base64')%>"  style="width: 50px; height: 50px;"></img>

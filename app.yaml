@@ -1,0 +1,5 @@
+runtime: nodejs16
+env: standard
+
+env_variables:
+  GCLOUD_STORAGE_BUCKET: connect-326117.appspot.com  

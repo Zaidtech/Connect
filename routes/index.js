@@ -28,7 +28,7 @@ router.post("/register", function(req,res){
             return res.render("register");
         }
         passport.authenticate("local")(req,res, function(){
-            req.flash("success", "Welcome to Connect" + user.username);
+            req.flash("success", "Welcome to Connect " + user.username+"!");
             res.redirect("/campgrounds");
         }) ;
     });
@@ -56,7 +56,7 @@ function(req,res){
 router.get("/logout", function(req,res){
     var sessions = req.sessionStore.sessions;
     req.logout();
-    req.flash("success", "Logged out successfully.");
+    // req.flash("success", "Logged out successfully.");
     res.redirect("/login");
 });
 

@@ -18,8 +18,18 @@ var commentRoutes           = require("./routes/comments"),
     path                    = require('path'),
     fs                      = require('fs');
 
+var pURL = "";
 
-const URL = "mongodb+srv://userZaid:Qcyfz3aRyRmEvpMq@cluster0.cm0aw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const dotenv = require('dotenv');
+dotenv.config();
+console.log("Env variable "+ process.env.GOOGLE_APPLICATION_CREDENTIALS);
+const {format} = require('util');
+const {Storage} = require('@google-cloud/storage');
+
+// Instantiate a storage client
+const storage = new Storage();
+
+const URL = "mongodb+srv://userZaid:Qcyfz3aRyRmEvpMq@cluster0.cm0aw.mongodb.net/Connect?retryWrites=true&w=majority"
 // Making a connection to the database
 // mongoose.connect('mongodb://localhost/yelp_camp', { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
 mongoose.connect(URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
@@ -49,6 +59,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use(function(req,res,next){
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
+    res.locals.imagelink = pURL;
     next();
 });
 
@@ -67,6 +78,7 @@ app.use(function(req,res,next){
                 else{
                     dp  = image
                     res.locals.images = image
+                    console.log(image)
                     next();
                     // console.log(image)
                 }    // res.render("index", {images:images});
@@ -87,29 +99,41 @@ app.use("/campgrounds", campgroundRoutes);
 app.use(commentRoutes)
 
 
-// Uploading image stuff
-const current_path = path.join(__dirname, "uploads");
+// // Uploading image stuff
+// const current_path = path.join(__dirname, "uploads");
 
-app.use('/uploads', express.static('uploads')); // to serve uploaded images!!!
+// app.use('/uploads', express.static('uploads')); // to serve uploaded images!!!
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './uploads')
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, './uploads')
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, file.originalname)
+//     }
+// })
+
+
+// var upload = multer({
+//      storage: storage 
+// })
+
+// multer gcp bucket integration
+const Multer = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 20 * 1024 * 1024, // no larger than 5mb, you can change as needed.
     },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname)
-    }
-})
-
-var upload = multer({
-     storage: storage 
-})
+  });
+  
+const bucket = storage.bucket("connect-326117.appspot.com");
 
 
 // SEEDING
 // seedDB();
 
 // ROUTES
+
 
 // Image Upload Stuff
 app.get("/changePic", function(req,res){
@@ -118,18 +142,39 @@ app.get("/changePic", function(req,res){
 });
 
 
-app.post('/changePic', upload.single('profile-pic'), (req, res, next) => {
+app.post('/changePic', Multer.single('profile-pic'), (req, res, next) => {
    
     // console.log(req.user);
+    if (!req.file) {
+        res.status(400).send('No file uploaded.');
+        return;
+    }
+
+    const blob = bucket.file(req.file.originalname);
+    const blobStream = blob.createWriteStream();
+
+    blobStream.on('error', err => {
+        next(err);
+    });
+
+
+    blobStream.on('finish', () => {
+    // The public URL can be used to directly access the file via HTTP.
+    const publicUrl = format( `https://storage.googleapis.com/${bucket.name}/${blob.name}`);
+
+    pURL  = publicUrl;
+    console.log(pURL); 
+    res.locals.imagelink = pURL;
+    // res.status(200).send(publicUrl);
+    });
+
+    blobStream.end(req.file.buffer);
 
     var obj = {
-        name: req.body.name,
-        desc: req.body.desc,
-        img: {
-            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-            contentType: 'image/png'
+            img: pURL
         }
-    }
+    
+    console.log(`OBject is ${obj}`);
 
     User.findById(req.user._id , function(err,user){
        
@@ -147,9 +192,11 @@ app.post('/changePic', upload.single('profile-pic'), (req, res, next) => {
             }
             else {
                 // item.save();
-                
+                console.log("created uimage objecet and saving it to db!!");
+                console.log(image);
                 user.images.push(image);
                 user.save();
+                image.save();
                 // console.log("Image saved to db!! ")
                 res.redirect('/campgrounds');
 
@@ -160,13 +207,15 @@ app.post('/changePic', upload.single('profile-pic'), (req, res, next) => {
 });
 
 
+
+const PORT = process.env.PORT || 8080;
 // Server srutff
-app.listen(2000, function () {
+app.listen(PORT, function () {
     console.log("Server has started"); 
 });
 
 
-// for hosting purpose!!
+// // // for hosting purpose!!
 // app.listen(process.env.PORT, process.env.IP, function(){
 //     console.log("Yelpcamp server has started!")
 // });
