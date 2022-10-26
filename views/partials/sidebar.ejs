@@ -1,0 +1,26 @@
+
+ <div class="visible-md visible-lg">
+    <p class="lead"></p>
+    <div class="list-group">
+        <%if(!users){ %>
+
+            <% }else { %>
+                
+              <%  users.forEach(function(user){ %>
+
+                    <!-- <li class="list-group-item"> <%= user.username%>  -->
+                        <img class="img-circle" align="center" src="https://www.seekpng.com/png/full/356-3562377_personal-user.png" style="width: 45px; height: 45px;"> <a href=""> <b><%= user.username%>  </b></a> 
+                        <p></p>
+            </p>
+                <%})%>
+         
+            <%}%>
+            
+        <!-- <li class="list-group-item active">Camping</li> -->
+        <!-- <li class="list-group-item">Lifestyle</li> -->
+        <!-- <li class="list-group-item">Food</li> -->
+    </div>
+    
+    <!-- <div> Map goes here!! Location of post!!</div> -->
+</div>
+ 

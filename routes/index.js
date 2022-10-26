@@ -1,8 +1,8 @@
-var express  = require('express')
+var express  = require('express');
 var router   = express.Router()
-var User     = require("../models/user")
+var User     = require("../models/user");
 var passport = require('passport');
-var middleWare = require("../middleware")
+var middleWare = require("../middleware");  
 
 
 router.get("/", middleWare.isLoggedIn, function (req, res) {
@@ -17,7 +17,6 @@ router.get("/register",function(req,res){
 
 
 router.post("/register", function(req,res){
-
     var newUser = new User({username: req.body.username});
     
     User.register(newUser,req.body.password, function(err,user){
@@ -56,8 +55,9 @@ function(req,res){
 router.get("/logout", function(req,res){
     var sessions = req.sessionStore.sessions;
     req.logout();
-    // req.flash("success", "Logged out successfully.");
+    req.flash("success", "Logged out successfully.");
     res.redirect("/login");
 });
+
 
 module.exports   = router;

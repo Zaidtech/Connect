@@ -23,7 +23,7 @@ var pURL = "";
 const dotenv = require('dotenv');
 dotenv.config();
 console.log("Env variable "+ process.env.GOOGLE_APPLICATION_CREDENTIALS);
-const {format} = require('util');
+const {format} =     require('util');
 const {Storage} = require('@google-cloud/storage');
 
 // Instantiate a storage client
@@ -39,7 +39,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"))
 app.use(flash());
-    
+
 // express session
 app.use(require('express-session')({
     secret : "The snake is flying on pencil nose!!",
@@ -59,9 +59,9 @@ passport.deserializeUser(User.deserializeUser());
 app.use(function(req,res,next){
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
-    res.locals.imagelink = pURL;
     next();
 });
+
 
 // making a var req.user publically accessible
 app.use(function(req,res,next){
@@ -69,14 +69,14 @@ app.use(function(req,res,next){
     if(req.user){
         
         res.locals.currentUser = req.user;
-       
+        res.locals.imagelink = pURL;
 
         var dp = {};
         imgModel.findById(req.user.images, function(err,image){
                 if(err)
                     console.log(err)
                 else{
-                    dp  = image
+                    // dp  = image
                     res.locals.images = image
                     console.log(image)
                     next();
@@ -90,6 +90,28 @@ app.use(function(req,res,next){
         next();
     }
  
+});
+
+
+// getting all the users in the app till now
+var users = []
+
+User.find({},function(err,names){
+    
+    names.forEach(function(name){
+        users.push(name)
+        // console.log(name.username)
+    });
+    // exclude the current signed in user
+    console.log(users)
+    // if(name.username==)
+
+});
+
+app.use( function(req,res,next) {
+
+    res.locals.users = users;
+    next();
 });
 
 
@@ -179,11 +201,12 @@ app.post('/changePic', Multer.single('profile-pic'), (req, res, next) => {
     User.findById(req.user._id , function(err,user){
        
         // remove the previios profile pic!!
+        // also try to clear the cloud storage bucket!!
         imgModel.remove({},function(err){
             if(err)
                 console.log(err)
             else
-                console.log("")
+                console.log("Image model for this user is deleted!");
         });
 
         imgModel.create(obj, (err, image) => {

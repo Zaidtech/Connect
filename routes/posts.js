@@ -8,6 +8,7 @@ router.get("/new", middleWare.isLoggedIn, function (req, res) {
     res.render("campgrounds/new");
 });
 
+
 // GET route to display all campgrounds
 router.get("/", middleWare.isLoggedIn ,function (req, res) {
 
